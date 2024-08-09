@@ -180,8 +180,8 @@ Use the component in your Angular component html template
 If you are using <a href="https://aws.amazon.com/amplify/" target="_blank">AWS Amplify</a> for your app and Amazon Cognito to authenticate your users, here is how you can integrate the webcomponent in a React App using Amplify and Cognito.  
 
 In your React component, import the amplify_outputs.json file
-import amplifyConfig from "../amplify_outputs.json";
 ```javascript
+import amplifyConfig from "../amplify_outputs.json";
 ```
 
 In the config object you pass to the web component, remplate the `auth` property by
