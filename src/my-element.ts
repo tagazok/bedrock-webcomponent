@@ -23,6 +23,7 @@ import { userIcon, assistantIcon } from './assetPaths.js';
 import DOMPurify from 'dompurify';
 import { marked } from "marked";
 import { awsCredentialsForAnonymousUser, awsCredentialsForAuthCognitoUser } from "./authentication";
+import { format } from 'path';
 
 export const defaultOptions = {
 
@@ -44,7 +45,10 @@ export class MyElement extends LitElement {
   config: any = undefined;
 
   @property()
-  private prompt: string = '';
+  prompt: string = '';
+
+  @property({ type: Array })
+  attachedFiles: any[] = [];
 
   @property({ type: Array })
   messages: Message[] = [];
@@ -87,44 +91,126 @@ export class MyElement extends LitElement {
   }
 
   protected renderMessage(message: Message) {
+    console.log(message);
     const htmlContent = marked.parse(message.content[0].text);
     const sanitizedHtml = DOMPurify.sanitize(htmlContent);
 
     return html`
         <div class="message ${message.role}">
-          <!-- <img lass="avatar" src=${userIcon} /> -->
            ${this.renderMessageIcon(message.role)}
-          <!-- ${choose(message.role, [
-      ['user', () => html`${userIcon}`],
-      ['assistant', () => html`${assistantIcon}`]
-    ])} -->
           <div class="body-response" >
             <div class="text" >
               ${unsafeHTML(sanitizedHtml)}
            </div>
+           ${when(this.attachedFiles.length > 0, () => html`
+            <div class="attached-files">
+              ${repeat(message.content, (file, index) => this.renderFile(file, index))}
+            </div>
+           `)}
         </div>
       </div>`;
+  }
+
+  protected removeFile(event: any) {
+    const clickedElementIndex: number = parseInt((event.target as Element).getAttribute('data-index')!, 10);
+
+    this.attachedFiles.splice(clickedElementIndex, 1);
+    this.attachedFiles = [...this.attachedFiles];
+  }
+
+  protected getImage(file: any) {
+    // const thumbnail = URL.createObjectURL(image);
+
+    const blob = new Blob([file.image.source.bytes], { type: file.image.mimeType });
+    const thumbnail = URL.createObjectURL(blob);
+    return thumbnail;
+  }
+
+  protected renderFile(file: any, index: number, withDeleteButton: boolean = false) {
+    // const imageExtensions = ['image/gif', 'image/jpeg', 'image/png', 'image/webp'];
+    // const isImage = imageExtensions.includes(file.type.toLowerCase());
+    //   return html`
+    //   <div class="file">
+    //     ${isImage
+    //       ? html`<img class="thumbnail" src="${this.getImage(file)}" />`
+    //       : html`
+    //     <div class="thumbnail">
+    //       <div class="filename">
+    //           ${file.name}
+    //       </div>
+    //       <div class="filetype">
+    //         ${file.type.split('/')[1]}
+    //       </div>
+    //     </div>`
+    //     }
+    //     ${when(withDeleteButton, () => html`
+    //     <button data-index=${index} type="button" aria-label="Remove file" @click=${this.removeFile}>
+    //       X
+    //     </button>`)}
+    //   </div>
+    // `;
+
+    if (file.image) {
+      return html`
+      <div class="file">
+        <img class="thumbnail" src="${this.getImage(file)}" />
+        ${when(withDeleteButton, () => html`
+          <button data-index=${index} type="button" aria-label="Remove file" @click=${this.removeFile}>
+            X
+          </button>`)}
+      </div>
+    `;
+    } else if (file.document) {
+      return html`
+      <div class="file">
+        <div class="thumbnail">
+          <div class="filename">
+              ${file.document.fileName}
+          </div>
+          <div class="filetype">
+            ${file.document.format}
+          </div>
+        </div>
+        ${when(withDeleteButton, () => html`
+          <button data-index=${index} type="button" aria-label="Remove file" @click=${this.removeFile}>
+            X
+          </button>`)}
+      </div>`;
+    }
   }
 
   protected renderPromptInput() {
     return html`
     <div class="prompt-container">
         <div class="prompt">
-        <form>
-            <textarea 
-              placeholder="How can I help you today?"
-              .value=${this.prompt}
-              @input=${this.handlePromptInput}
-              required
-              @keydown=${this.onPromptKeyDown}
-              >
-            </textarea>
-            <div class="button">
-              <button type="button" @click=${async () => this.onSendPromptClicked()}>
-                  <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzQiIGhlaWdodD0iMzQiIHZpZXdCb3g9IjAgMCAzNCAzNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzUzOF83NzIxMykiPgo8cGF0aCBkPSJNMzEuMTEyOSAxNi45NzA2SDE1LjU1NjUiIHN0cm9rZT0iIzk4QTJCMyIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggZD0iTTMxLjExMjggMTYuOTcwNkwxMi4wMjEgMjYuMTYzTDE1LjU1NjUgMTYuOTcwNkwxMi4wMjEgNy43NzgxOEwzMS4xMTI4IDE2Ljk3MDZaIiBzdHJva2U9IiM5OEEyQjMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfNTM4Xzc3MjEzIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSJ3aGl0ZSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTYuOTcwNykgcm90YXRlKDQ1KSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPg==" alt="submit">
-              </button>
+          <form>
+              <textarea 
+                placeholder="How can I help you today?"
+                .value=${this.prompt}
+                @input=${this.handlePromptInput}
+                required
+                @keydown=${this.onPromptKeyDown}
+                >
+              </textarea>
+              ${when(this.config.attachFilesToPrompt, () => html`
+                <label for="attach-file">
+                  <a aria-label="add image to prompt">
+                      📎
+                  </a>
+                </label>
+                <input type="file" id="attach-file" multiple accept=".csv, .doc, .docx, .html, .md, .pdf, .txt, .xls, .xlsx, .gif, .jpeg, .png, .webp" @change=${this.attachfile} />
+              `)}
+              <div class="button">
+                <button type="button" @click=${async () => this.onSendPromptClicked()}>
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzQiIGhlaWdodD0iMzQiIHZpZXdCb3g9IjAgMCAzNCAzNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzUzOF83NzIxMykiPgo8cGF0aCBkPSJNMzEuMTEyOSAxNi45NzA2SDE1LjU1NjUiIHN0cm9rZT0iIzk4QTJCMyIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggZD0iTTMxLjExMjggMTYuOTcwNkwxMi4wMjEgMjYuMTYzTDE1LjU1NjUgMTYuOTcwNkwxMi4wMjEgNy43NzgxOEwzMS4xMTI4IDE2Ljk3MDZaIiBzdHJva2U9IiM5OEEyQjMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfNTM4Xzc3MjEzIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSJ3aGl0ZSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTYuOTcwNykgcm90YXRlKDQ1KSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPg==" alt="submit">
+                </button>
+              </div>
+          </form>
+          ${when(this.attachedFiles.length > 0, () => html`
+            <div class="attached-files">  
+                ${repeat(this.attachedFiles, (file, index) => this.renderFile(file, index, true))}
             </div>
-        </form>
+          `)}
         </div>
     </div>`;
   }
@@ -151,15 +237,70 @@ export class MyElement extends LitElement {
   }
   async onSendPromptClicked() {
     if (this.prompt) {
-      await this.sendMessage(this.prompt);
+      await this.sendMessage();
       this.prompt = '';
+      this.attachedFiles = [];
       // TODO: Make textarea a property of the component?
       // this.handlePromptInput();
     }
   }
 
-  async onPromptKeyDown(e: KeyboardEvent) {
-    if (e.key === 'Enter') {
+  private getAttachedFileType(file) {
+    const imageExtensions = ['image/gif', 'image/jpeg', 'image/png', 'image/webp'];
+
+    if (imageExtensions.includes(file.type.toLowerCase())) {
+      return 'image';
+    }
+    return 'document'
+  }
+
+  async attachfile(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+
+
+    // this.attachedFiles.push(...Object.values(files));
+    const newFiles = [];
+    for (const file of files) {
+      newFiles.push({
+        [this.getAttachedFileType(file)]: {
+          format: file.type.split('/')[1],
+          mimeType: file.type,
+          name: file.name.split('.')[0],
+          fileName: file.name,
+          source: {
+            bytes: new Uint8Array(await file.arrayBuffer())
+          }
+        }
+      })
+      // const tmpFile = {
+      //   format: file.type.split('/')[1],
+      //   mimeType: file.type,
+      //   name: file.name,
+      //   source: {
+      //     bytes: new Uint8Array(await file.arrayBuffer())
+      //   }
+      // }
+
+
+      // if (isImage) {
+      //   newFiles.push({
+      //     image: tmpFile
+      //   })
+      // } else {
+      //   newFiles.push({
+      //     document: tmpFile
+      //   })
+      // }
+    }
+
+    // this.attachedFiles = [...this.attachedFiles, ...Object.values(files)];
+    this.attachedFiles = [...this.attachedFiles, ...newFiles];
+
+    console.log(this.attachedFiles);
+  }
+
+  async onPromptKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
       this.onSendPromptClicked();
     }
   }
@@ -206,13 +347,37 @@ export class MyElement extends LitElement {
   }
 
 
-  private async sendMessage(prompt: string) {
+  private async sendMessage() {
     // this.setLoading(true);
     this.isLoading = true;
     const message: Message = {
       role: "user",
-      content: [{ text: prompt }]
+      content: [{
+        text: this.prompt
+      }]
     };
+    // if (this.attachedFiles && this.attachedFiles.length > 0) {
+    //   for (const file of this.attachedFiles) {
+    //     const image = await file.arrayBuffer();
+    //     const bytes = new Uint8Array(image);
+    //     message.content.push({
+    //       image: {
+    //         format: file.type.split('/')[1],
+    //         source: {
+    //           bytes: bytes
+    //         }
+    //       }
+    //     })
+    //   }
+    // }
+
+    if (this.attachedFiles && this.attachedFiles.length > 0) {
+      for (const file of this.attachedFiles) {
+  
+        message.content.push(file);
+      }
+    }
+
     this.addMessage(message);
 
     try {
@@ -265,6 +430,8 @@ export class MyElement extends LitElement {
       --assistant-chat-text-color: var(--brc-assistant-chat-text-color, var(--text-color));
     }
 
+
+
     .chat-container {
       width: 100%;
       height: 100%;
@@ -272,6 +439,101 @@ export class MyElement extends LitElement {
       flex-direction: column;
       background-color: var(--bg);
       position: relative;
+
+      & .attached-files {
+        display: flex;
+        flex-direction: row;
+        /* flex-wrap: wrap; */
+        gap: 8px;
+        overflow: auto;
+
+        .file {
+          padding: 15px 10px;
+          position: relative;
+
+          /* &:first-child {
+            padding-left: 0px;
+          } */
+          
+          
+
+          .thumbnail {
+            height: 85px;
+            width: auto;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+
+            &:not(img) {
+              border: solid 1px var(--primary);
+              aspect-ratio: 1;
+              overflow: hidden;
+              position: relative;
+            }
+
+            & .filename {
+              display: flex;
+              flex-direction: row;
+              justify-content: center;
+              align-items: center;
+              text-align: center;
+              text-overflow: ellipsis;
+              box-sizing: border-box;
+              font-size: .8rem;
+              padding: 5px;
+              flex-grow: 1;
+              overflow: hidden;
+              background-color: #fff;
+
+              div {
+                text-overflow: ellipsis;
+                overflow: hidden;
+                height: 100%;
+              }
+            }
+
+            & .filetype {
+              /* padding: 5px; */
+              color: var(--text-color);
+              background-color: var(--bg);
+              text-transform: uppercase;
+              width: 100%;
+              font-size: .7rem;
+              text-align: center;
+              box-sizing: border-box;
+              border-top: solid 1px var(--primary);
+
+              div {
+                text-align: center;
+              }
+            }
+          }
+
+          button {
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 0;
+            transition: transform .1s;
+            width: 24px;
+            height: 24px;
+            border: none;
+            border: solid 2px #fff;
+            background-color: #d83b3b;
+            color: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+
+            &:hover {
+                transform: scale(1.1);
+            }
+          }
+        }
+      }
 
       .web-experience {
         /* position: absolute; */
@@ -454,6 +716,14 @@ export class MyElement extends LitElement {
               font-style: italic;
             }
 
+            input[type=file] {
+              display: none;
+            }
+
+            a {
+              cursor: pointer;
+            }
+
             & .button {
               align-items: baseline;
               background-color: transparent;
@@ -508,3 +778,7 @@ declare global {
     'br-chat': MyElement;
   }
 }
+function internalProperty(arg0: {}): (target: MyElement, propertyKey: "prompt") => void {
+  throw new Error('Function not implemented.');
+}
+

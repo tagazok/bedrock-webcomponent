@@ -21,7 +21,7 @@ export type UIConfig = {
     // logoUrl?: string;
     // containerId?: string;
     webExperience?: WebExperience;
-    icons?: UIIconsConfig
+    icons?: UIIconsConfig;
 }
 
 export type BedrockAgentConfig = {
@@ -45,4 +45,5 @@ export type ChatConfig = {
     bedrock: BedrockConfig;
     ui: UIConfig;
     context?: string;
+    attachFilesToPrompt: boolean;
 }
