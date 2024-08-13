@@ -44,7 +44,7 @@ export class MyElement extends LitElement {
   })
   config: any = undefined;
 
-  @property()
+  // @property()
   prompt: string = '';
 
   @property({ type: Array })
@@ -59,6 +59,7 @@ export class MyElement extends LitElement {
   private _bedrockClient: AgentClient | ModelClient | undefined;
 
   protected reunderWebExperience() {
+    console.log("renderWebExperience");
     return html`
       <div class="web-experience">
         <div class="header">
@@ -78,6 +79,7 @@ export class MyElement extends LitElement {
   }
 
   protected renderMessageIcon(role: string) {
+    console.log("renderMessageIcon");
     if (role === 'assistant') {
       if (this.config.ui?.icons?.assistant) {
         return html`<img class="avatar" src="${this.config.ui.icons.assistant}" />`
@@ -91,7 +93,7 @@ export class MyElement extends LitElement {
   }
 
   protected renderMessage(message: Message) {
-    console.log(message);
+    console.log("renderMessage");
     const htmlContent = marked.parse(message.content[0].text);
     const sanitizedHtml = DOMPurify.sanitize(htmlContent);
 
@@ -102,7 +104,7 @@ export class MyElement extends LitElement {
             <div class="text" >
               ${unsafeHTML(sanitizedHtml)}
            </div>
-           ${when(this.attachedFiles.length > 0, () => html`
+           ${when(message.content.length > 1, () => html`
             <div class="attached-files">
               ${repeat(message.content, (file, index) => this.renderFile(file, index))}
             </div>
@@ -119,36 +121,14 @@ export class MyElement extends LitElement {
   }
 
   protected getImage(file: any) {
-    // const thumbnail = URL.createObjectURL(image);
-
+    console.log("getImage");
     const blob = new Blob([file.image.source.bytes], { type: file.image.mimeType });
     const thumbnail = URL.createObjectURL(blob);
     return thumbnail;
   }
 
   protected renderFile(file: any, index: number, withDeleteButton: boolean = false) {
-    // const imageExtensions = ['image/gif', 'image/jpeg', 'image/png', 'image/webp'];
-    // const isImage = imageExtensions.includes(file.type.toLowerCase());
-    //   return html`
-    //   <div class="file">
-    //     ${isImage
-    //       ? html`<img class="thumbnail" src="${this.getImage(file)}" />`
-    //       : html`
-    //     <div class="thumbnail">
-    //       <div class="filename">
-    //           ${file.name}
-    //       </div>
-    //       <div class="filetype">
-    //         ${file.type.split('/')[1]}
-    //       </div>
-    //     </div>`
-    //     }
-    //     ${when(withDeleteButton, () => html`
-    //     <button data-index=${index} type="button" aria-label="Remove file" @click=${this.removeFile}>
-    //       X
-    //     </button>`)}
-    //   </div>
-    // `;
+    console.log("renderFile");
 
     if (file.image) {
       return html`
@@ -180,6 +160,7 @@ export class MyElement extends LitElement {
   }
 
   protected renderPromptInput() {
+    console.log("renderPromptInput");
     return html`
     <div class="prompt-container">
         <div class="prompt">
@@ -216,6 +197,7 @@ export class MyElement extends LitElement {
   }
 
   override render() {
+    console.log("render");
     return html`
       <div class="chat-container">
         ${when(this.messages.length > 0, () => html`
@@ -272,25 +254,6 @@ export class MyElement extends LitElement {
           }
         }
       })
-      // const tmpFile = {
-      //   format: file.type.split('/')[1],
-      //   mimeType: file.type,
-      //   name: file.name,
-      //   source: {
-      //     bytes: new Uint8Array(await file.arrayBuffer())
-      //   }
-      // }
-
-
-      // if (isImage) {
-      //   newFiles.push({
-      //     image: tmpFile
-      //   })
-      // } else {
-      //   newFiles.push({
-      //     document: tmpFile
-      //   })
-      // }
     }
 
     // this.attachedFiles = [...this.attachedFiles, ...Object.values(files)];
@@ -356,20 +319,6 @@ export class MyElement extends LitElement {
         text: this.prompt
       }]
     };
-    // if (this.attachedFiles && this.attachedFiles.length > 0) {
-    //   for (const file of this.attachedFiles) {
-    //     const image = await file.arrayBuffer();
-    //     const bytes = new Uint8Array(image);
-    //     message.content.push({
-    //       image: {
-    //         format: file.type.split('/')[1],
-    //         source: {
-    //           bytes: bytes
-    //         }
-    //       }
-    //     })
-    //   }
-    // }
 
     if (this.attachedFiles && this.attachedFiles.length > 0) {
       for (const file of this.attachedFiles) {
@@ -676,7 +625,7 @@ export class MyElement extends LitElement {
             align-items: center;
             background-color: var(--prompt-input-bg-color);
             border: solid 1px var(--prompt-input-border-color);
-            border-radius: 8px;
+            /* border-radius: 8px; */
             box-sizing: border-box;
             display: flex;
             flex-direction: row;
