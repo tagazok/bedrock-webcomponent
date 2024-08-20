@@ -100,7 +100,7 @@ You can change the icons of the user and assistant by setting the `ui.icons` spe
 You can customize the welcome screen if you want to greet your users with a specific message by using the `ui.webExperience` configuration. You can specify a `title`, `subtitle` and `welcomeMessage`.
 This welcome screen will disapear as soon as the user starts a discussion.
 
-##### CSS
+##### Theme/CSS
 You can also customize a number of css attributes through css variables to make the webcomponent match your onwn branding/theme
 
 Here is a list of css variables you can custom:
@@ -129,7 +129,7 @@ Here is a list of css variables you can custom:
 
 Your imagination is the limit ^^
 
-![Screenshot of what the chat can look like if you play with theme](./public/screenshot-themed.png)
+![Screenshot of what the chat can look like if you play with theme](./public/screenshot-themed-w-code.png)
 
 
 ### Use it in your favourite framework
