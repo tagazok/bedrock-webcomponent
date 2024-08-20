@@ -655,7 +655,7 @@ export class MyElement extends LitElement {
           & .avatar {
             margin-bottom: auto;
             overflow: clip;
-            width: 41px;
+            width: 48px;
             height: auto;
           }
 
