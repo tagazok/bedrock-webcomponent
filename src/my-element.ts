@@ -518,8 +518,6 @@ export class MyElement extends LitElement {
             padding-left: 0px;
           } */
           
-          
-
           .thumbnail {
             height: 85px;
             width: auto;

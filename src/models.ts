@@ -45,5 +45,5 @@ export type ChatConfig = {
     bedrock: BedrockConfig;
     ui: UIConfig;
     context?: string;
-    attachFilesToPrompt: boolean;
+    attachFilesToPrompt?: boolean;
 }
