@@ -1,6 +1,6 @@
 ## Bedrock Webcomponent
 
-![Screenshot on how the window is rendered in a container](./public/screenshot-welcome.png)
+![Screenshot of how the window is rendered in a container](./public/screenshot-welcome.png)
 
 ### Install
 As of today, this webcomponent is not published on npm. You will have to build it yourself and link it to your project.  
@@ -122,6 +122,11 @@ Here is a list of css variables you can custom:
 --brc-prompt-input-text-color: ;
 --brc-prompt-input-border-color: ;
 ```
+
+Your imagination is the limit ^^
+
+![Screenshot of what the chat can look like if you play with theme](./public/screenshot-themed.png)
+
 
 ### Use it in your favourite framework
 
