@@ -2,6 +2,9 @@
 
 ![Screenshot of how the window is rendered in a container](./public/screenshot-welcome.png)
 
+https://github.com/user-attachments/assets/98d947f9-d724-4dfd-8f6e-62af0ffcdbd4
+
+
 ### Install
 As of today, this webcomponent is not published on npm. You will have to build it yourself and link it to your project.  
 Don't worry, this is easier than it looks :) 
@@ -68,6 +71,7 @@ brConfig: ChatConfig  = {
         //   user: 'assets/user.png'
         // }
     },
+    attachFilesToPrompt: true
   }
 ```
 #### Auth
