@@ -44,7 +44,8 @@ export class MyElement extends LitElement {
   })
   config: any = undefined;
 
-  // @property()
+  // TODO: Check if prompt as a property has an impact on performances
+  @property()
   prompt: string = '';
 
   @property({ type: Array })
@@ -194,6 +195,7 @@ export class MyElement extends LitElement {
                 placeholder="${this.config.ui.placeholder || 'How can I help you today?'}"
                 .value=${this.prompt}
                 @input=${this.handlePromptInput}
+                autocomplete="off"
                 required
                 @keydown=${this.onPromptKeyDown}
                 >
@@ -204,10 +206,20 @@ export class MyElement extends LitElement {
                       📎
                   </a>
                 </label>
-                <input type="file" id="attach-file" multiple accept=".csv, .doc, .docx, .html, .md, .pdf, .txt, .xls, .xlsx, .gif, .jpeg, .png, .webp" @change=${this.attachfile} />
+                <input 
+                  type="file" 
+                  id="attach-file" 
+                  ?disabled=${this.isLoading}
+                  multiple 
+                  accept=".csv, .doc, .docx, .html, .md, .pdf, .txt, .xls, .xlsx, .gif, .jpeg, .png, .webp" 
+                  @change=${this.attachfile} />
               `)}
               <div class="button">
-                <button type="button" @click=${async () => this.onSendPromptClicked()}>
+                <button 
+                  type="button" 
+                  ?disabled=${this.prompt.trim() == "" || this.isLoading}
+                  @click=${async () => this.onSendPromptClicked()}
+                  >
                     <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzQiIGhlaWdodD0iMzQiIHZpZXdCb3g9IjAgMCAzNCAzNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzUzOF83NzIxMykiPgo8cGF0aCBkPSJNMzEuMTEyOSAxNi45NzA2SDE1LjU1NjUiIHN0cm9rZT0iIzk4QTJCMyIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggZD0iTTMxLjExMjggMTYuOTcwNkwxMi4wMjEgMjYuMTYzTDE1LjU1NjUgMTYuOTcwNkwxMi4wMjEgNy43NzgxOEwzMS4xMTI4IDE2Ljk3MDZaIiBzdHJva2U9IiM5OEEyQjMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfNTM4Xzc3MjEzIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSJ3aGl0ZSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTYuOTcwNykgcm90YXRlKDQ1KSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPg==" alt="submit">
                 </button>
               </div>
@@ -243,6 +255,9 @@ export class MyElement extends LitElement {
 
   }
   async onSendPromptClicked() {
+    if (this.isLoading) {
+      return;
+    }
     if (this.prompt) {
       await this.sendMessage();
       this.prompt = '';
@@ -290,7 +305,12 @@ export class MyElement extends LitElement {
 
   async onPromptKeyDown(event: KeyboardEvent) {
     if (event.key === 'Enter') {
-      this.onSendPromptClicked();
+      if (event.shiftKey) {
+        return;
+      } else {
+        event.preventDefault();
+        this.onSendPromptClicked();
+      }
     }
   }
 
@@ -372,10 +392,9 @@ export class MyElement extends LitElement {
 
     } catch (err) {
       console.error(err);
+    } finally {
       this.isLoading = false;
     }
-
-    this.isLoading = false;
   }
 
   static override styles = css`
