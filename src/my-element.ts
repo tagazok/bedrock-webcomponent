@@ -8,7 +8,7 @@
 
 import { Message } from '@aws-sdk/client-bedrock-runtime/dist-types/models';
 import { LitElement, html, css } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property, query, state } from 'lit/decorators.js';
 
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { repeat } from 'lit/directives/repeat.js';
@@ -56,6 +56,9 @@ export class MyElement extends LitElement {
 
   @state()
   protected isLoading: boolean = false;
+
+  @query('.prompt form textarea')
+  protected promptDOMElement!: HTMLTextAreaElement;
 
   private _bedrockClient: AgentClient | ModelClient | undefined;
 
@@ -252,8 +255,8 @@ export class MyElement extends LitElement {
     const target = event.target as HTMLTextAreaElement;
     this.prompt = target.value;
     this.adjustTextareaHeight(target);
-
   }
+
   async onSendPromptClicked() {
     if (this.isLoading) {
       return;
@@ -261,6 +264,10 @@ export class MyElement extends LitElement {
     if (this.prompt) {
       await this.sendMessage();
       this.prompt = '';
+      setTimeout(() => {
+        this.adjustTextareaHeight(this.promptDOMElement);
+      }, 0);
+
       this.attachedFiles = [];
       // TODO: Make textarea a property of the component?
       // this.handlePromptInput();
@@ -355,7 +362,6 @@ export class MyElement extends LitElement {
     textarea.style.height = `${textarea.scrollHeight}px`;
   }
 
-
   private async sendMessage() {
     // this.setLoading(true);
     this.isLoading = true;
@@ -368,7 +374,7 @@ export class MyElement extends LitElement {
 
     if (this.attachedFiles && this.attachedFiles.length > 0) {
       for (const file of this.attachedFiles) {
-  
+
         message.content.push(file);
       }
     }
@@ -423,96 +429,35 @@ export class MyElement extends LitElement {
       --assistant-chat-border-color: var(--brc-assistant-chat-border-color, #d0d5dd);
       --assistant-chat-text-color: var(--brc-assistant-chat-text-color, var(--text-color));
     }
-/* 
 
     .file-icon {
-  position: relative;
-  width: auto;
-  height: 85px;
-  background: linear-gradient(to bottom, #ffffff, #e9eff7);
-  border: 1px solid #dcdcdc;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
+      position: relative;
+      background-color: white;
+      border-radius: 5px;
+      overflow: hidden;
+    }
 
-.file-corner {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 20px;
-  height: 20px;
-  background-color: #ffffff;
-  border-top: 1px solid #dcdcdc;
-  border-right: 1px solid #dcdcdc;
-  clip-path: polygon(0 0, 100% 0, 100% 100%);
-}
+    .file-header {
+      text-align: center;
+      background-color: #e74c3c;
+    }
 
-.file-body {
-  padding: 10px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-}
+    .file-type {
+      color: white;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
 
-.file-name {
-  font-size: 14px;
-  color: #3573b9;
-  word-wrap: break-word;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 3; 
-  -webkit-box-orient: vertical;
-  line-height: 1.2em; 
-  max-height: calc(1.2em * 3); 
-}
-.file-type {
-  background-color: #3573b9;
-  color: white;
-  border-radius: 5px;
-  padding: 3px 8px;
-  font-size: 12px;
-  margin-top: auto;
-
-  color: var(--text-color);
-  background-color: var(--bg);
-  text-transform: uppercase;
-} */
-
-  .file-icon {
-  position: relative;
-  background-color: white;
-  border-radius: 5px;
-  overflow: hidden;
-}
-
-.file-header {
-  text-align: center;
-  background-color: #e74c3c;
-}
-
-.file-type {
-  color: white;
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
-.file-body {
-  /* padding: 4px; */
-  text-align: center;
-  word-wrap: break-word;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2; 
-  -webkit-box-orient: vertical;
-  font-size: .8rem;
-  padding: 5px;
-  /* line-height: 1.2em; 
-  max-height: calc(1.2em * 3);  */
-}
-
-
+    .file-body {
+      text-align: center;
+      word-wrap: break-word;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2; 
+      -webkit-box-orient: vertical;
+      font-size: .8rem;
+      padding: 5px;
+    }
 
     .chat-container {
       width: 100%;
