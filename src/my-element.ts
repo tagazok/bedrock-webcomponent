@@ -191,7 +191,7 @@ export class MyElement extends LitElement {
         <div class="prompt">
           <form>
               <textarea 
-                placeholder="How can I help you today?"
+                placeholder="${this.config.ui.placeholder || 'How can I help you today?'}"
                 .value=${this.prompt}
                 @input=${this.handlePromptInput}
                 required

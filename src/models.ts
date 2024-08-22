@@ -22,6 +22,7 @@ export type UIConfig = {
     // containerId?: string;
     webExperience?: WebExperience;
     icons?: UIIconsConfig;
+    placeholder?: string;
 }
 
 export type BedrockAgentConfig = {

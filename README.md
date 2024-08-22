@@ -66,10 +66,11 @@ brConfig: ChatConfig  = {
             subtitle: "Welcome to the future",
             welcomeMessage: "Hey, how can I help you today?",
         },
-        // icons: {
-        //   assistant: 'assets/assistant.png',
-        //   user: 'assets/user.png'
-        // }
+        icons: {
+          assistant: 'assets/assistant.png',
+          user: 'assets/user.png'
+        },
+        placeholder: "Hi, how can I help you?"
     },
     attachFilesToPrompt: true
   }
