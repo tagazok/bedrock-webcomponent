@@ -58,9 +58,14 @@ brConfig: ChatConfig  = {
         // agent: {
         //   agentId: "",
         //   agentAliasId: ""
-        // }
+        // },
+        inferenceConfig: { // (optional)
+            maxTokens: 600,
+            temperature: 0.5,
+            topP: 1
+        }
     },
-    ui: {
+    ui: { // (optional)
         webExperience: {
             title: "My local Bedrock",
             subtitle: "Welcome to the future",
@@ -72,7 +77,7 @@ brConfig: ChatConfig  = {
         },
         placeholder: "Hi, how can I help you?"
     },
-    attachFilesToPrompt: true
+    attachFilesToPrompt: true // (optional)
   }
 ```
 #### Auth

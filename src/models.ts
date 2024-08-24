@@ -30,10 +30,16 @@ export type BedrockAgentConfig = {
     agentAliasId: string;
 }
 
+export type InferenceConfig = {
+    maxTokens?: number;
+    temperature?: number;
+    topP?: number;
+}
 export type BedrockConfig = {
     region: string;
     modelId?: string;
     agent?: BedrockAgentConfig;
+    inferenceConfig?: InferenceConfig;
 }
 export type AuthConfig = {
     region: string;

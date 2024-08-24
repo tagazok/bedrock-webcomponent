@@ -13,7 +13,6 @@ import { customElement, property, query, state } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { when } from 'lit/directives/when.js';
-import { choose } from 'lit/directives/choose.js';
 
 import { ModelClient } from './model-client';
 import { AgentClient } from './agent-client';
@@ -23,7 +22,6 @@ import { userIcon, assistantIcon } from './assetPaths.js';
 import DOMPurify from 'dompurify';
 import { marked } from "marked";
 import { awsCredentialsForAnonymousUser, awsCredentialsForAuthCognitoUser } from "./authentication";
-import { format } from 'path';
 
 export const defaultOptions = {
 
@@ -54,7 +52,7 @@ export class MyElement extends LitElement {
   @property({ type: Array })
   messages: Message[] = [];
 
-  @state()
+  // @state()
   protected isLoading: boolean = false;
 
   @query('.prompt form textarea')
@@ -155,12 +153,6 @@ export class MyElement extends LitElement {
               </div>
               <div class="file-body">
                 ${file.document.fileName}
-                <!-- <div class="file-content-lines">
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                </div> -->
               </div>
             </div>
           </div>
@@ -170,21 +162,6 @@ export class MyElement extends LitElement {
            </button>`)}
         </div>
       `;
-      // return html`
-      // <div class="file">
-      //   <div class="thumbnail">
-      //     <div class="filename">
-      //         ${file.document.fileName}
-      //     </div>
-      //     <div class="filetype">
-      //       ${file.document.format}
-      //     </div>
-      //   </div>
-      //   ${when(withDeleteButton, () => html`
-      //     <button data-index=${index} type="button" aria-label="Remove file" @click=${this.removeFile}>
-      //       X
-      //     </button>`)}
-      // </div>`;
     }
   }
 
@@ -269,8 +246,6 @@ export class MyElement extends LitElement {
       }, 0);
 
       this.attachedFiles = [];
-      // TODO: Make textarea a property of the component?
-      // this.handlePromptInput();
     }
   }
 

@@ -37,51 +37,5 @@ export class AgentClient {
             const decodedResponse = new TextDecoder("utf-8").decode(chunk.bytes);
             yield decodedResponse;
         }
-
-        // if (response.stream === undefined) {
-        //     throw new Error("Stream is undefined");
-        // }
-
-        // for await (const item of response.stream) {
-        //     if (item.contentBlockDelta) {
-        //         const text = item.contentBlockDelta.delta?.text;
-        //         if (text) {
-        //             yield text
-        //         }
-        //     }
-        // }
-        // return completion;
     }
-
-    // async sendMessage(messages: any[]) {
-    //     debugger;
-
-    //     const command = new InvokeAgentCommand({
-    //         agentId: this.config.bedrock.agent.agentId,
-    //         agentAliasId: this.config.bedrock.agent.agentAliasId,
-    //         sessionId: this.sessionId,
-    //         inputText: messages[messages.length - 1].content[0].text
-    //     });
-
-    //     try {
-    //         const response = await this.#bedrockClient.send(command);
-    //         let completion = "";
-
-    //         if (response.completion === undefined) {
-    //             throw new Error("Completion is undefined");
-    //         }
-
-    //         for await (let chunkEvent of response.completion) {
-    //             const chunk = chunkEvent.chunk;
-    //             if (chunk) {
-    //                 const decodedResponse = new TextDecoder("utf-8").decode(chunk.bytes);
-    //                 completion += decodedResponse;
-    //             }
-    //         }
-    //         return completion
-    //     } catch (error) {
-    //         console.log(`ERROR: ${error}`);
-    //         throw error;
-    //     }
-    // }
 }
