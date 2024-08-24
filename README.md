@@ -138,6 +138,20 @@ Your imagination is the limit ^^
 ![Screenshot of what the chat can look like if you play with theme](./public/screenshot-themed-w-code.png)
 
 
+### Events
+
+Every time a new message is added to the chat, a `brc-messages-updated` event is sent.  
+You can easily listen to this event and retrieve the array of all the messages of the chat. This can be useful if for example you want to send the messages to a server to store them in a database
+
+```javascript
+const chatComponent = document.querySelector('br-chat');
+
+chatComponent.addEventListener('brc-messages-updated', (event) => {
+    console.log('Messages array updated:', event.detail.messages);
+    // Handle the updated messages array here
+});
+```
+
 ### Use it in your favourite framework
 
 #### React

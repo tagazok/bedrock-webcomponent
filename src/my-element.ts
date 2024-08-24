@@ -258,6 +258,18 @@ export class MyElement extends LitElement {
     return 'document'
   }
 
+  private notifyMessagesUpdated() {
+    console.log("notifyMessagesUpdated");
+    const event = new CustomEvent('brc-messages-updated', {
+      detail: {
+        messages: this.messages
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(event);
+  }
+
   async attachfile(event: Event) {
     const files = (event.target as HTMLInputElement).files;
 
@@ -329,6 +341,7 @@ export class MyElement extends LitElement {
 
   addMessage(message: Message) {
     this.messages = [...this.messages, message];
+    this.notifyMessagesUpdated()
   }
 
   private adjustTextareaHeight(textarea: HTMLTextAreaElement) {
@@ -370,6 +383,7 @@ export class MyElement extends LitElement {
         responseMessage.content[0].text += chunk;
         this.messages = [...messages, responseMessage];
       }
+      this.notifyMessagesUpdated();
 
     } catch (err) {
       console.error(err);
