@@ -33,6 +33,15 @@ You can then use it in your html file
 <br-chat config=""></br-chat>
 ```
 
+You can also give an array of messages when initializing the chat
+
+```html
+<br-chat config="" messages=""></br-chat>
+```
+
+> [!IMPORTANT]
+> The messages is an array of messages following the [Amazon Bedrock conversation API](https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html)
+
 ### Configuration
 
 ```javascript
