@@ -104,6 +104,15 @@ Simply set the `bedrock.modelId` parameter in the plugin to specify which model 
 - By calling a Bedrock Agent
 Specify the `bedrock.agent` parameter with the `agentId` and `agentAliasId`
 
+You can also configure the inference of your model by setting `bedrock.inferenceConfig` . By default the values are:
+```json
+{
+    maxTokens: 1024,
+    temperature: 0.5,
+    topP: 0.9,
+}
+```
+
 #### UI
 
 ##### Icons
