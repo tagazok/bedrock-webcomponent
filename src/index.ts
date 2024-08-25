@@ -1,2 +1,2 @@
-export * from './my-element';
+export * from './chat';
 export * from './models';

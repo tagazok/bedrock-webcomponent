@@ -251,7 +251,6 @@ export class MyElement extends LitElement {
   override render() {
     console.log("render");
     return html`
-    <div>Config: ${JSON.stringify(this.config, null, 2)}</div>
       <div class="chat-container">
         ${when(this.messages.length > 0, () => html`
           <div class="messages">
