@@ -16,12 +16,12 @@ export class ModelClient {
     }
 
     async *sendMessage(messages: any[]) {
-        const modelId = this.config.bedrock.modelId || "anthropic.claude-3-sonnet-20240229-v1:0";
+        const modelId = this.config.bedrock.modelId;
 
         const command = new ConverseStreamCommand({
             modelId: modelId,
             messages: messages,
-            inferenceConfig: this.config.bedrock.inferenceConfig || { maxTokens: 4096, temperature: 0.5, topP: 0.9 },
+            inferenceConfig: this.config.bedrock.inferenceConfig,
         });
 
         const response = await this.#bedrockClient.send(command);

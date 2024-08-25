@@ -24,7 +24,26 @@ import { marked } from "marked";
 import { awsCredentialsForAnonymousUser, awsCredentialsForAuthCognitoUser } from "./authentication";
 
 export const defaultOptions = {
+  bedrock: {
+    modelId: "anthropic.claude-3-sonnet-20240229-v1:0",
+    inferenceConfig: {
+      maxTokens: 1024,
+      temperature: 0.5,
+      topP: 0.9,
+    }
+  }
+}
 
+function deepMerge(target, source) {
+  console.warn("* deepMerge");
+  for (const key of Object.keys(source)) {
+    if (source[key] instanceof Object && key in target) {
+      Object.assign(source[key], deepMerge(target[key], source[key]));
+    }
+  }
+
+  // Combine the merged source with the target
+  return { ...target, ...source };
 }
 
 /**
@@ -36,11 +55,27 @@ export const defaultOptions = {
  */
 @customElement('br-chat')
 export class MyElement extends LitElement {
+  // @property({
+  //   type: Object,
+  //   converter: (value: any) => ({ ...defaultOptions, ...JSON.parse(value ?? '{}') }),
+  // })
+  // config: any = undefined;
   @property({
     type: Object,
-    converter: (value: any) => ({ ...defaultOptions, ...JSON.parse(value ?? '{}') }),
+    converter: {
+      fromAttribute: (value: string) => {
+        try {
+          const parsedValue = JSON.parse(value);
+          // Use deep merge to combine default options with parsed value
+          return deepMerge(defaultOptions, parsedValue);
+        } catch (e) {
+          console.warn('Invalid JSON string:', value, e);
+          return defaultOptions; // Return default options if parsing fails
+        }
+      }
+    },
   })
-  config: any = undefined;
+  config: any = defaultOptions;
 
   // TODO: Check if prompt as a property has an impact on performances
   @property()
@@ -59,7 +94,7 @@ export class MyElement extends LitElement {
   protected promptDOMElement!: HTMLTextAreaElement;
 
   private _bedrockClient: AgentClient | ModelClient | undefined;
-
+  
   protected reunderWebExperience() {
     console.log("renderWebExperience");
     return html`
@@ -216,6 +251,7 @@ export class MyElement extends LitElement {
   override render() {
     console.log("render");
     return html`
+    <div>Config: ${JSON.stringify(this.config, null, 2)}</div>
       <div class="chat-container">
         ${when(this.messages.length > 0, () => html`
           <div class="messages">
