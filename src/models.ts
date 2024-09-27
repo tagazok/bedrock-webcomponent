@@ -1,3 +1,5 @@
+import { SystemContentBlock, ToolConfiguration } from "@aws-sdk/client-bedrock-runtime";
+
 export type WebExperience = {
     title: string;
     subtitle: string;
@@ -35,18 +37,23 @@ export type InferenceConfig = {
     temperature?: number;
     topP?: number;
 }
+
 export type BedrockConfig = {
     region: string;
     modelId?: string;
     agent?: BedrockAgentConfig;
     inferenceConfig?: InferenceConfig;
+    toolConfig?: ToolConfiguration;
+    system: SystemContentBlock[]
 }
+
 export type AuthConfig = {
     region: string;
     identityPoolId: string;
     cognito?: CognitoAuthConfig
     anonymous?: AnonymousAuthConfig;
 }
+
 export type ChatConfig = {
     auth: AuthConfig;
     bedrock: BedrockConfig;

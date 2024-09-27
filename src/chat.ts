@@ -35,14 +35,11 @@ export const defaultOptions = {
 }
 
 function deepMerge(target, source) {
-  console.warn("* deepMerge");
   for (const key of Object.keys(source)) {
     if (source[key] instanceof Object && key in target) {
       Object.assign(source[key], deepMerge(target[key], source[key]));
     }
   }
-
-  // Combine the merged source with the target
   return { ...target, ...source };
 }
 
@@ -55,11 +52,6 @@ function deepMerge(target, source) {
  */
 @customElement('br-chat')
 export class MyElement extends LitElement {
-  // @property({
-  //   type: Object,
-  //   converter: (value: any) => ({ ...defaultOptions, ...JSON.parse(value ?? '{}') }),
-  // })
-  // config: any = undefined;
   @property({
     type: Object,
     converter: {
@@ -376,17 +368,15 @@ export class MyElement extends LitElement {
 
   addMessage(message: Message) {
     this.messages = [...this.messages, message];
-    this.notifyMessagesUpdated()
+    this.notifyMessagesUpdated();
   }
 
   private adjustTextareaHeight(textarea: HTMLTextAreaElement) {
-
     textarea.style.height = '0px';
     textarea.style.height = `${textarea.scrollHeight}px`;
   }
 
   private async sendMessage() {
-    // this.setLoading(true);
     this.isLoading = true;
     const message: Message = {
       role: "user",

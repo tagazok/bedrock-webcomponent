@@ -22,6 +22,7 @@ export class ModelClient {
             modelId: modelId,
             messages: messages,
             inferenceConfig: this.config.bedrock.inferenceConfig,
+            toolConfig: this.config.bedrock.toolConfig
         });
 
         const response = await this.#bedrockClient.send(command);
