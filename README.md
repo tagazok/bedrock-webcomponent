@@ -72,8 +72,7 @@ brConfig: ChatConfig  = {
             maxTokens: 600,
             temperature: 0.5,
             topP: 1
-        },
-        toolConfig: {},
+        }
         system: []
     },
     ui: { // (optional)

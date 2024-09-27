@@ -480,6 +480,7 @@ export class MyElement extends LitElement {
       flex-direction: column;
       background-color: var(--bg);
       position: relative;
+      text-align: left;
 
       & .attached-files {
         display: flex;

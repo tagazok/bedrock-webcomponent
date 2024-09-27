@@ -1,6 +1,6 @@
 {
-  "name": "br-chat",
-  "version": "1.1.0",
+  "name": "@tagazok/br-chat-wc",
+  "version": "0.0.1",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -10,10 +10,19 @@
     "build": "tsc && npm run copy-assets",
     "copy-assets": "copyfiles -u 1 src/assets/* dist/assets"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "genAI",
+    "Amazon Bedrock",
+    "Bedrock",
+    "Web component"
+  ],
+  "author": "Olivier Leplus (https://tagazok.github.io/)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tagazok/bedrock-webcomponent.git"
+  },
   "license": "ISC",
-  "description": "",
+  "description": "A web component for Amazon Bedrock",
   "dependencies": {
     "@aws-sdk/client-bedrock": "^3.624.0",
     "@aws-sdk/client-bedrock-agent-runtime": "^3.624.0",
@@ -29,5 +38,9 @@
     "@types/node": "^22.1.0",
     "copyfiles": "^2.4.1",
     "typescript": "^5.5.4"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/tagazok/bedrock-webcomponent/issues"
+  },
+  "homepage": "https://github.com/tagazok/bedrock-webcomponent#readme"
 }
