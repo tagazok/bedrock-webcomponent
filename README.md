@@ -6,16 +6,9 @@ https://github.com/user-attachments/assets/98d947f9-d724-4dfd-8f6e-62af0ffcdbd4
 
 
 ### Install
-As of today, this webcomponent is not published on npm. You will have to build it yourself and link it to your project.  
-Don't worry, this is easier than it looks :) 
-- Download the source code and go in the folder
+
 ```bash
-npm run build
-npm link
-```
-Go in the project where you want to add the webcomponent
-```bash
-npm link br-chat-wc
+npm @tagazok/br-chat-wc
 ```
 
 You should now be able to use the webcomponent in your project.
