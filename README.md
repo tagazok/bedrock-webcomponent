@@ -8,7 +8,7 @@ https://github.com/user-attachments/assets/98d947f9-d724-4dfd-8f6e-62af0ffcdbd4
 ### Install
 
 ```bash
-npm @tagazok/br-chat-wc
+npm install @tagazok/br-chat-wc
 ```
 
 You should now be able to use the webcomponent in your project.
