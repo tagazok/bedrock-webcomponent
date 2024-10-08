@@ -26,11 +26,11 @@ import { awsCredentialsForAnonymousUser, awsCredentialsForAuthCognitoUser } from
 export const defaultOptions = {
   bedrock: {
     modelId: "anthropic.claude-3-sonnet-20240229-v1:0",
-    inferenceConfig: {
-      maxTokens: 1024,
-      temperature: 0.5,
-      topP: 0.9,
-    }
+    // inferenceConfig: {
+    //   maxTokens: 1024,
+    //   temperature: 0.5,
+    //   topP: 0.9,
+    // }
   }
 }
 
@@ -54,20 +54,21 @@ function deepMerge(target, source) {
 export class MyElement extends LitElement {
   @property({
     type: Object,
-    converter: {
-      fromAttribute: (value: string) => {
-        try {
-          const parsedValue = JSON.parse(value);
-          // Use deep merge to combine default options with parsed value
-          return deepMerge(defaultOptions, parsedValue);
-        } catch (e) {
-          console.warn('Invalid JSON string:', value, e);
-          return defaultOptions; // Return default options if parsing fails
-        }
-      }
-    },
+    // converter: {
+    //   fromAttribute: (value: string) => {
+    //     try {
+    //       const parsedValue = JSON.parse(value);
+    //       // Use deep merge to combine default options with parsed value
+    //       return deepMerge(defaultOptions, parsedValue);
+    //     } catch (e) {
+    //       console.warn('Invalid JSON string:', value, e);
+    //       return defaultOptions; // Return default options if parsing fails
+    //     }
+    //   }
+    // },
   })
-  config: any = defaultOptions;
+  // config: any = defaultOptions;
+  config: any = {};
 
   // TODO: Check if prompt as a property has an impact on performances
   @property()
@@ -86,7 +87,7 @@ export class MyElement extends LitElement {
   protected promptDOMElement!: HTMLTextAreaElement;
 
   private _bedrockClient: AgentClient | ModelClient | undefined;
-  
+
   protected reunderWebExperience() {
     console.log("renderWebExperience");
     return html`
@@ -199,7 +200,7 @@ export class MyElement extends LitElement {
         <div class="prompt">
           <form>
               <textarea 
-                placeholder="${this.config.ui.placeholder || 'How can I help you today?'}"
+                placeholder="${this.config.ui?.placeholder || 'How can I help you today?'}"
                 .value=${this.prompt}
                 @input=${this.handlePromptInput}
                 autocomplete="off"
@@ -249,7 +250,7 @@ export class MyElement extends LitElement {
             ${repeat(this.messages, (message) => this.renderMessage(message))}
           </div>
         `)}
-        ${when(this.messages.length <= 0 && this.config.ui.webExperience, () => html`${this.reunderWebExperience()}`)}
+        ${when(this.messages.length <= 0 && this.config.ui?.webExperience, () => html`${this.reunderWebExperience()}`)}
         ${this.renderPromptInput()}
       </div>
     `;
@@ -343,7 +344,17 @@ export class MyElement extends LitElement {
   }
 
   private async init() {
-    if (!this.config) {
+    const errors = [];
+    if (!this.config.auth) {
+      errors.push("Authentication missing");
+    }
+    if (!this.config.bedrock || !this.config.bedrock?.modelId) {
+      errors.push("Bedrock information missing");
+    }
+    if (errors.length > 0) {
+      for (const error of errors) {
+        console.error(error);
+      }
       return;
     }
 
@@ -356,7 +367,7 @@ export class MyElement extends LitElement {
       } else {
         throw new Error("There is an error with your credentials. Check if you put a valid role");
       }
-      if (this.config.bedrock.agent) {
+      if (this.config.bedrock?.agent) {
         this._bedrockClient = new AgentClient(this.config, credentials);
       } else if (this.config.bedrock.modelId) {
         this._bedrockClient = new ModelClient(this.config, credentials);
@@ -481,6 +492,7 @@ export class MyElement extends LitElement {
       background-color: var(--bg);
       position: relative;
       text-align: left;
+      justify-content: end;
 
       & .attached-files {
         display: flex;

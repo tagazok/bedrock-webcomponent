@@ -44,7 +44,7 @@ export type BedrockConfig = {
     agent?: BedrockAgentConfig;
     inferenceConfig?: InferenceConfig;
     toolConfig?: ToolConfiguration;
-    system: SystemContentBlock[]
+    system?: SystemContentBlock[]
 }
 
 export type AuthConfig = {
@@ -57,7 +57,7 @@ export type AuthConfig = {
 export type ChatConfig = {
     auth: AuthConfig;
     bedrock: BedrockConfig;
-    ui: UIConfig;
+    ui?: UIConfig;
     context?: string;
     attachFilesToPrompt?: boolean;
 }
