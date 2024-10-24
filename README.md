@@ -18,7 +18,7 @@ You should now be able to use the webcomponent in your project.
 To use the webcomponent, import it in your project.  
 Note: Depending of the framework you are using, how you import it may differ
 ```javascript
-import 'br-chat-wc';
+import '@tagazok/br-chat-wc';
 ```
 
 You can then use it in your html file
@@ -39,11 +39,11 @@ You can also give an array of messages when initializing the chat
 
 ```javascript
 
-import { ChatConfig } from 'br-chat-wc';
+import { ChatConfig } from '@tagazok/br-chat-wc';
 
 ...
 
-brConfig: ChatConfig  = {
+const brConfig: ChatConfig  = {
     auth: {
         region: "us-west-2",
         identityPoolId: "",
@@ -65,7 +65,7 @@ brConfig: ChatConfig  = {
             maxTokens: 600,
             temperature: 0.5,
             topP: 1
-        }
+        },
         system: []
     },
     ui: { // (optional)
